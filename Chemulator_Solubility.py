@@ -6,24 +6,21 @@ from Taowa_wx import *
 from Taowa_skin import *
 from Chemulator import *
 from Chemulator_batch import *
-from Chemulator_Solubility import *
+from Chemulator_mw import *
 
 
-class Frame_mw(wx.Frame):
+
+class Frame_solu(wx.Frame):
     def __init__(self):
-        wx_Frame.__init__(self, None, title='化学浓度换算', size=(1014, 635),name='frame',style=541072384)
+        wx.Frame.__init__(self, None, title='化学浓度换算', size=(1014, 635),name='frame',style=541072384)
         icon = wx.Icon(r'.\ICO\volumetric-flask.png')
+
         self.SetIcon(icon)
         self.Bind(wx.EVT_CLOSE, self.on_close)  # 绑定关闭事件
         self.启动窗口 = wx.Panel(self)
-        self.启动窗口.SetOwnBackgroundColour((249, 249, 249, 249))
         self.Centre()
-
+        self.启动窗口.Bind(wx.EVT_PAINT, self.OnPaint)
         self.m_menubar4 = wx.MenuBar(0)
-        self.m_menubar4.SetFont(
-            wx.Font(20, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "宋体"))
-        self.m_menubar4.SetBackgroundColour(wx.Colour(240, 240, 240))
-
         self.m_menu8 = wx.Menu()
         self.m_menuItem6 = wx.MenuItem(self.m_menu8, wx.ID_ANY, _(u"打开根目录") + u"\t" + u"Ctrl+O", _(u"打开项目根目录"),
                                        wx.ITEM_NORMAL)
@@ -61,13 +58,13 @@ class Frame_mw(wx.Frame):
         self.m_menuItem8.SetBitmap(
             wx.Bitmap(u"./ICO/weight.png", wx.BITMAP_TYPE_ANY))
         self.m_menu11.Append(self.m_menuItem8)
-        self.m_menuItem8.Enable(False)
 
         self.m_menuItem10 = wx.MenuItem(self.m_menu11, wx.ID_ANY, _(u"溶解度计算") + u"\t" + u"Ctrl+R", _(u"用于化学溶解度计算"),
                                        wx.ITEM_NORMAL)
         self.m_menuItem10.SetBitmap(
             wx.Bitmap(u"./ICO/solution.png", wx.BITMAP_TYPE_ANY))
         self.m_menu11.Append(self.m_menuItem10)
+        self.m_menuItem10.Enable(False)
 
         self.m_menubar4.Append(self.m_menu11, _(u"计算"))
 
@@ -87,7 +84,6 @@ class Frame_mw(wx.Frame):
         self.Bind(wx.EVT_MENU, self.Batch, id=self.m_menuItem7.GetId())
         self.Bind(wx.EVT_MENU, self.Quality, id=self.m_menuItem8.GetId())
         self.Bind(wx.EVT_MENU, self.help, id=self.m_menuItem9.GetId())
-        self.Bind(wx.EVT_MENU, self.solu, id=self.m_menuItem10.GetId())
 
         self.SetMenuBar(self.m_menubar4)
 
@@ -109,10 +105,9 @@ class Frame_mw(wx.Frame):
         self.组合框2.SetSize((172, 28))
         # 刷新Combobox的选项
         self.refresh_folder_names()
-        组合框2_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
+        组合框2_字体 = wx.Font(12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑")
         self.组合框2.SetFont(组合框2_字体)
         self.组合框2.SetOwnBackgroundColour((249, 249, 249, 249))
-
         self.组合框2.Bind(wx.EVT_COMBOBOX, self.组合框2_选中列表项)
         self.组合框2.Bind(wx.EVT_COMBOBOX_DROPDOWN, self.组合框2_弹出列表项)
         self.超级列表框1 = wx_ListCtrl(self.启动窗口,size=(285, 490),pos=(1, 79),name='listCtrl',style=32)
@@ -147,53 +142,48 @@ class Frame_mw(wx.Frame):
                                   style=1)
         标签1_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.标签1.SetFont(标签1_字体)
-        self.编辑框3 = wx_TextCtrl(self.启动窗口, size=(110, 28), pos=(547, 139), value='', name='text', style=256)
+        self.编辑框3 = wx_TextCtrl(self.启动窗口, size=(180, 28), pos=(336, 243), value='', name='text', style=256)
         编辑框3_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.编辑框3.SetFont(编辑框3_字体)
+        self.编辑框3.SetForegroundColour((128, 0, 0, 255))
         self.编辑框3.SetOwnBackgroundColour((249, 249, 249, 249))
-        self.标签2 = wx_StaticTextL(self.启动窗口, size=(120, 28), pos=(545, 107), label='数值(Amount)', name='staticText',
-                                  style=1)
-        标签2_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
-        self.标签2.SetFont(标签2_字体)
-        self.标签3 = wx_StaticTextL(self.启动窗口, size=(92, 27), pos=(335, 211), label='转化自', name='staticText', style=1)
-        标签3_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
-        self.标签3.SetFont(标签3_字体)
-        self.标签4 = wx_StaticTextL(self.启动窗口, size=(92, 27), pos=(547, 212), label='转化为', name='staticText', style=1)
-        标签4_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
-        self.标签4.SetFont(标签4_字体)
-        self.标签4.SetForegroundColour((30, 69, 151, 255))
-        self.标签5 = wx_StaticTextL(self.启动窗口, size=(151, 28), pos=(335, 307), label='溶质分子量(m.w)', name='staticText',
+
+        # self.标签2 = wx_StaticTextL(self.启动窗口, size=(130, 28), pos=(335, 209), label='单位选择', name='staticText',
+        #                           style=1)
+        # 标签2_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
+        # self.标签2.SetFont(标签2_字体)
+
+        self.组合框3 = wx_ComboBox(self.启动窗口,value='',pos=(335, 209),name='comboBox',choices=['溶质(g)','摩尔溶解度(mol/mol)'],style=32)
+        self.组合框3.SetHint('请选择...')
+        self.组合框3.SetSize((180, 28))
+        组合框3_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
+        self.组合框3.SetFont(组合框3_字体)
+        self.组合框3.SetForegroundColour((255, 255, 255, 255))
+        self.组合框3.SetOwnBackgroundColour((31, 128, 186, 255))
+
+
+
+        self.标签5 = wx_StaticTextL(self.启动窗口, size=(151, 28), pos=(335, 287), label='溶质分子量(m.w)', name='staticText',
                                   style=1)
         标签5_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.标签5.SetFont(标签5_字体)
-        self.标签8 = wx_StaticTextL(self.启动窗口, size=(131, 28), pos=(335, 229), label='(Convert from)', name='staticText',
-                                  style=1)
-        标签8_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
-        self.标签8.SetFont(标签8_字体)
-        self.标签10 = wx_StaticTextL(self.启动窗口, size=(106, 28), pos=(547, 229), label='(Convert to)', name='staticText',
+
+        self.标签10 = wx_StaticTextL(self.启动窗口, size=(106, 28), pos=(547, 209), label='溶剂密度(ρ）', name='staticText',
                                    style=1)
         标签10_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.标签10.SetFont(标签10_字体)
-        self.标签10.SetForegroundColour((30, 69, 151, 255))
-        self.编辑框4 = wx_TextCtrl(self.启动窗口, size=(110, 28), pos=(335, 340), value='', name='text', style=256)
+        self.编辑框4 = wx_TextCtrl(self.启动窗口, size=(110, 28), pos=(335, 320), value='', name='text', style=256)
         编辑框4_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.编辑框4.SetFont(编辑框4_字体)
         self.编辑框4.SetForegroundColour((128, 0, 0, 255))
         self.编辑框4.SetOwnBackgroundColour((249, 249, 249, 249))
-        self.组合框3 = wx_ComboBox(self.启动窗口, value='', pos=(335, 263), name='comboBox',
-                                choices=['nmol/μmol','nmol/mmol','nmol/mol','μmol/mmol','μmol/mol','mmol/mol','mol/mol','ng/g','ug/g','mg/g','g/100g'],
-                                style=16)
-        self.组合框3.SetSize((110, 28))
-        组合框3_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
-        self.组合框3.SetFont(组合框3_字体)
-        self.组合框3.SetOwnBackgroundColour((249, 249, 249, 249))
-        self.组合框4 = wx_ComboBox(self.启动窗口, value='', pos=(547, 263), name='comboBox',
-                                choices=['nmol/μmol','nmol/mmol','nmol/mol','μmol/mmol','μmol/mol','mmol/mol','mol/mol','ng/g','ug/g','mg/g','g/100g'],
-                                style=16)
-        self.组合框4.SetSize((110, 28))
-        组合框4_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
-        self.组合框4.SetFont(组合框4_字体)
-        self.组合框4.SetOwnBackgroundColour((249, 249, 249, 249))
+
+
+        self.编辑框14 = wx_TextCtrl(self.启动窗口, size=(110, 28), pos=(547, 243), value='', name='text', style=256)
+        编辑框11_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
+        self.编辑框14.SetFont(编辑框11_字体)
+        self.编辑框14.SetOwnBackgroundColour((249, 249, 249, 249))
+
         self.编辑框7 = wx_TextCtrl(self.启动窗口, size=(590, 32), pos=(336, 473), value='', name='text', style=16)
         编辑框7_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.编辑框7.SetFont(编辑框7_字体)
@@ -201,7 +191,7 @@ class Frame_mw(wx.Frame):
         self.编辑框7.SetOwnBackgroundColour((249, 249, 249, 249))
         图文按钮6_图片 = wx.Image(r'.\ICO\down.png').ConvertToBitmap()
 
-        self.图文按钮L2 = lib_gb_GradientButton(self.启动窗口, size=(96, 30), pos=(336, 439), bitmap=None, label='计算结果',
+        self.图文按钮L2 = lib_gb_GradientButton(self.启动窗口, size=(96, 30), pos=(336, 442), bitmap=None, label='计算结果',
                                             name='gradientbutton')
         图文按钮L2_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.图文按钮L2.SetFont(图文按钮L2_字体)
@@ -216,9 +206,9 @@ class Frame_mw(wx.Frame):
         self.整数微调框1.SetBase(10)
         整数微调框1_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.整数微调框1.SetFont(整数微调框1_字体)
-        self.整数微调框1.Bind(wx.EVT_SPINCTRL,self.整数微调框1_数值被调整)
         self.整数微调框1.SetForegroundColour((128, 0, 0, 255))
         self.整数微调框1.SetOwnBackgroundColour((249, 249, 249, 249))
+        self.整数微调框1.Bind(wx.EVT_SPINCTRL,self.整数微调框1_数值被调整)
 
         self.标签6 = wx_StaticTextL(self.启动窗口, size=(192, 24), pos=(708, 449), label='设置计算结果的小数位数：', name='staticText',
                                   style=256)
@@ -231,18 +221,62 @@ class Frame_mw(wx.Frame):
         self.编辑框6.SetOwnBackgroundColour((249, 249, 249, 249))
 
 
-        self.标签11 = wx_StaticTextL(self.启动窗口, size=(151, 21), pos=(547, 307), label='溶剂分子量(m.w)', name='staticText',
+        self.标签11 = wx_StaticTextL(self.启动窗口, size=(151, 21), pos=(547, 287), label='溶剂1分子量', name='staticText',
                                    style=1)
         标签11_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.标签11.SetFont(标签11_字体)
         self.标签11.SetForegroundColour((30, 69, 151, 255))
-        self.编辑框8 = wx_TextCtrl(self.启动窗口, size=(110, 28), pos=(547, 340), value='', name='text', style=256)
+
+        self.标签12 = wx_StaticTextL(self.启动窗口, size=(107, 21), pos=(688, 287), label='溶剂2分子量', name='staticText',
+                                   style=1)
+        标签12_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
+        self.标签12.SetFont(标签12_字体)
+        self.标签12.SetForegroundColour((255, 116, 49, 255))
+        self.标签13 = wx_StaticTextL(self.启动窗口, size=(109, 21), pos=(819, 287), label='溶剂3分子量', name='staticText',
+                                   style=1)
+        标签13_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
+        self.标签13.SetFont(标签13_字体)
+        self.标签13.SetForegroundColour((58, 118, 118, 255))
+        self.标签14 = wx_StaticTextL(self.启动窗口, size=(105, 24), pos=(546, 354), label='溶剂1质量(g)', name='staticText', style=1)
+        标签14_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
+        self.标签14.SetFont(标签14_字体)
+        self.标签14.SetForegroundColour((30, 69, 151, 255))
+        self.标签15 = wx_StaticTextL(self.启动窗口, size=(105, 24), pos=(687, 354), label='溶剂2质量(g)', name='staticText', style=1)
+        标签15_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
+        self.标签15.SetFont(标签15_字体)
+        self.标签15.SetForegroundColour((255, 116, 49, 255))
+        self.标签16 = wx_StaticTextL(self.启动窗口, size=(105, 24), pos=(819, 354), label='溶剂3质量(g)', name='staticText', style=1)
+        标签16_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
+        self.标签16.SetFont(标签16_字体)
+        self.标签16.SetForegroundColour((58, 118, 118, 255))
+
+        self.编辑框9 = wx_TextCtrl(self.启动窗口, size=(110, 28), pos=(687, 321), value='', name='text', style=256)
+        self.编辑框10 = wx_TextCtrl(self.启动窗口, size=(110, 28), pos=(819, 321), value='', name='text', style=256)
+        self.编辑框11 = wx_TextCtrl(self.启动窗口, size=(110, 28), pos=(546, 388), value='', name='text', style=256)
+        self.编辑框12 = wx_TextCtrl(self.启动窗口, size=(110, 28), pos=(687, 388), value='', name='text', style=256)
+        self.编辑框13 = wx_TextCtrl(self.启动窗口, size=(110, 28), pos=(819, 388), value='', name='text', style=256)
+        self.编辑框8 = wx_TextCtrl(self.启动窗口, size=(110, 28), pos=(547, 320), value='', name='text', style=256)
         编辑框8_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.编辑框8.SetFont(编辑框8_字体)
+        self.编辑框9.SetFont(编辑框8_字体)
+        self.编辑框10.SetFont(编辑框8_字体)
+        self.编辑框11.SetFont(编辑框8_字体)
+        self.编辑框12.SetFont(编辑框8_字体)
+        self.编辑框13.SetFont(编辑框8_字体)
         self.编辑框8.SetOwnBackgroundColour((249, 249, 249, 249))
+        self.编辑框9.SetOwnBackgroundColour((249, 249, 249, 249))
+        self.编辑框10.SetOwnBackgroundColour((249, 249, 249, 249))
+        self.编辑框11.SetOwnBackgroundColour((249, 249, 249, 249))
+        self.编辑框12.SetOwnBackgroundColour((249, 249, 249, 249))
+        self.编辑框13.SetOwnBackgroundColour((249, 249, 249, 249))
+
         图片框6_图片 = wx.Image(r'.\ICO\arrow.png').ConvertToBitmap()
         self.图片框6 = wx_StaticBitmap(self.启动窗口, bitmap=图片框6_图片, size=(35, 32), pos=(487, 289), name='staticBitmap',
                                     style=0)
+        ## 设置分隔竖线条
+        # self.m_staticline5 = wx.StaticLine(self.启动窗口, wx.ID_ANY, wx.DefaultPosition, wx.Size(2, 200), wx.LI_HORIZONTAL)
+        # self.m_staticline5.SetPosition(wx.Point(600, 50))
+
 
 
 
@@ -251,10 +285,33 @@ class Frame_mw(wx.Frame):
         self.Bind(wx.EVT_TEXT, self.更新编辑框7内容, self.编辑框4)
         self.Bind(wx.EVT_TEXT, self.更新编辑框7内容, self.编辑框3)
         self.Bind(wx.EVT_TEXT, self.更新编辑框7内容, self.编辑框8)
-        self.Bind(wx.EVT_COMBOBOX, self.更新编辑框7内容, self.组合框3)
-        self.Bind(wx.EVT_COMBOBOX, self.更新编辑框7内容, self.组合框4)
+        self.Bind(wx.EVT_TEXT, self.更新编辑框7内容, self.编辑框9)
+        self.Bind(wx.EVT_TEXT, self.更新编辑框7内容, self.编辑框10)
+        self.Bind(wx.EVT_TEXT, self.更新编辑框7内容, self.编辑框11)
+        self.Bind(wx.EVT_TEXT, self.更新编辑框7内容, self.编辑框12)
+        self.Bind(wx.EVT_TEXT, self.更新编辑框7内容, self.编辑框13)
+        self.Bind(wx.EVT_TEXT, self.更新编辑框7内容, self.编辑框14)
+        self.Bind(wx.EVT_TEXT, self.更新编辑框7内容, self.组合框3)
 
-
+    def OnPaint(self, event):
+        dc = wx.PaintDC(self.启动窗口)  # 绘制在 self.启动窗口中
+        brush = wx.Brush(wx.Colour(249, 249, 249))  # 设置背景颜色为 (249, 249, 249)
+        dc.SetBackground(brush)
+        dc.Clear()
+        color = wx.Colour(255, 0, 0)
+        b = wx.Brush(color)
+        dc.SetBrush(b)
+        dc.SetBrush(wx.Brush(wx.Colour(255, 255, 255)))
+        font = wx.Font(18, wx.ROMAN, wx.ITALIC, wx.NORMAL)
+        dc.SetFont(font)
+        dc.DrawText("m1/M1", 800, 30)
+        pen = wx.Pen(wx.Colour(0, 0, 0))
+        dc.SetPen(pen)
+        dc.DrawLine(746, 63, 960, 63)
+        dc.DrawText("m1/M1+m2/M2+m3/M3", 746, 70)
+        font = wx.Font(18, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_NORMAL, False, "华文中宋")
+        dc.SetFont(font)
+        dc.DrawText("溶解度(x1) =", 600, 50)
 
     # Virtual event handlers, overide them in your derived class
     def Open( self, event ):
@@ -284,6 +341,8 @@ class Frame_mw(wx.Frame):
     def Quality(self, event):
         from Chemulator_mw import Frame_mw
         quality_frame = Frame_mw()  # 创建 Chemulator_batch.py中的窗口实例
+        # # 关闭当前窗口
+        # self.Close()
         self.Destroy() #直接退出程序
         quality_frame.Show(True)  # 显示窗口
 
@@ -292,12 +351,6 @@ class Frame_mw(wx.Frame):
         current_dir = os.getcwd()
         help_file_path = os.path.join(current_dir, "help.chm")
         os.system(f'explorer {help_file_path}')
-
-    def solu(self, event):
-        from Chemulator_Solubility import Frame_solu
-        solu_frame = Frame_solu()  # 创建 Frame_solu.py中的窗口实例
-        self.Destroy() #直接退出程序
-        solu_frame.Show(True)  # 显示窗口
 
     def all_data(self):
         project_dir = "./Project"
@@ -327,12 +380,10 @@ class Frame_mw(wx.Frame):
 
 
     def 图文按钮3_按钮被单击(self, event):
-        # Clear the data in 编辑框6, 编辑框4, 编辑框3, 组合框3, and 组合框4
+        # Clear the data in 编辑框6, 编辑框4, 编辑框3, and 组合框4
         self.编辑框6.SetValue('')
         self.编辑框4.SetValue('')
         self.编辑框3.SetValue('')
-        self.组合框3.SetValue('')
-        self.组合框4.SetValue('')
 
 
 
@@ -696,19 +747,26 @@ class Frame_mw(wx.Frame):
         wx.MessageBox("复制成功！", "提示", wx.OK | wx.ICON_INFORMATION)
     def 更新编辑框7内容(self, event):
         compound_name = self.编辑框6.GetValue()
-        molecular_weight = self.组合框4.GetValue()
         data_value = self.编辑框3.GetValue()
-        data_unit = self.组合框3.GetValue()
         data_value_2 = self.编辑框8.GetValue()
+        data_value_3 = self.编辑框9.GetValue()
+        data_value_4 = self.编辑框10.GetValue()
+        data_value_5 = self.编辑框11.GetValue()
+        data_value_6 = self.编辑框12.GetValue()
+        data_value_7 = self.编辑框13.GetValue()
+        data_value_8 = self.编辑框14.GetValue()
 
-        if compound_name and molecular_weight and data_value and data_unit and data_value_2:
+        if compound_name and data_value and (data_value_2 or data_value_3 or data_value_4 or data_value_5 or data_value_6 or data_value_7):
             # 获取选中列表项的数值
             selected_value = int(self.整数微调框1.GetValue())
 
             # 调用单位计算过程函数来计算variable变量的值
             self.单位计算过程(event)
             # 添加变量的声明和初始化
-            variable = self.variable
+            variable = self.variable  ## variable 是指摩尔溶解度 mol/mol
+            # print(variable)
+            variable_1 = self.variable_1  ## variable_1 是指质量溶解度 g/100g
+            variable_2 = self.variable_2  ## variable_1 是指样本溶解度 g/100mL
             # print(variable)
 
             # 判断是否使用科学计数法表示，并受到小数位数限制
@@ -719,17 +777,36 @@ class Frame_mw(wx.Frame):
             else:
                 variable = "{:.{}f}".format(variable, selected_value)
 
-            result = " ".join([compound_name, "：", data_value, data_unit, "=", variable, molecular_weight])
-            self.编辑框7.SetValue(result)
+            # 判断 variable_1 是否使用科学计数法表示，并且限制小数位数
+            if (variable_1 != 0) and (variable_1 >= 10 ** 4 or variable_1 <= 10 ** -4) and selected_value != 0:
+                variable_1 = "{:.{}e}".format(variable_1, selected_value)
+            elif variable_1 * 1 == 0:
+                variable_1 = "0.0"
+            else:
+                variable_1 = "{:.{}f}".format(variable_1, selected_value)
+
+            # 判断 variable_2 是否使用科学计数法表示，并且限制小数位数
+            if (variable_2 != 0) and (variable_2 >= 10 ** 4 or variable_2 <= 10 ** -4) and selected_value != 0:
+                variable_2 = "{:.{}e}".format(variable_2, selected_value)
+            elif variable_2 * 1 == 0:
+                variable_2 = "0.0"
+            else:
+                variable_2 = "{:.{}f}".format(variable_2, selected_value)
+
+            result = " ".join([compound_name, "：",str(variable_2),"g/100mL", "=", str(variable), "mol/mol","=",str(variable_1),"g/100g"])
+
+            result_1 = " ".join(
+                [compound_name, "：", str(data_value), "mol/mol", "=", str(variable_2), "g/100mL",  "=", str(variable_1),
+                 "g/100g"])
+            if self.组合框3.GetValue() == '溶质(g)':
+                self.编辑框7.SetValue(result)
+            elif self.组合框3.GetValue() == '摩尔溶解度(mol/mol)':
+                self.编辑框7.SetValue(result_1)
 
     def 整数微调框1_数值被调整(self, event):
         self.更新编辑框7内容(event)
 
     def 单位计算过程(self, event):
-        # 获取组合框3和组合框4当前选中的单位
-        unit_3 = self.组合框3.GetValue()
-        unit_4 = self.组合框4.GetValue()
-
         concentration_str = self.编辑框3.GetValue()
         if concentration_str == '':
             concentration = decimal.Decimal(0)  # 设置一个默认值
@@ -738,184 +815,108 @@ class Frame_mw(wx.Frame):
 
         mw_str_1 = self.编辑框4.GetValue()
         if mw_str_1 == '':
-            mw1 = decimal.Decimal(1)   # 设置一个默认值
+            self.mw1 = decimal.Decimal(1)   # 设置一个默认值
         else:
-            mw1 = decimal.Decimal(mw_str_1)    # 设置mw1为溶质分子量
+            self.mw1 = decimal.Decimal(mw_str_1)    # 设置self.mw1为溶质分子量
 
         mw_str_2 = self.编辑框8.GetValue()
+        mw_str_3 = self.编辑框9.GetValue()
+        mw_str_4 = self.编辑框10.GetValue()
         if mw_str_2 == '':
             mw2 = decimal.Decimal(1)  # 设置一个默认值
         else:
-            mw2 = decimal.Decimal(mw_str_2)     # 设置mw2为溶剂分子量
+            mw2 = decimal.Decimal(mw_str_2)     # 设置mw2为溶剂1分子量
+
+        if mw_str_3 == '':
+            mw3 = decimal.Decimal(1)  # 设置一个默认值
+        else:
+            mw3 = decimal.Decimal(mw_str_3)     # 设置mw3为溶剂2分子量
+
+        if mw_str_4 == '':
+            mw4 = decimal.Decimal(1)  # 设置一个默认值
+        else:
+            mw4 = decimal.Decimal(mw_str_4)     # 设置mw4为溶剂3分子量
+
+        m_str_1 = self.编辑框11.GetValue()    ##设置m_str_1 为溶剂1质量
+        m_str_2 = self.编辑框12.GetValue()    ##设置m_str_2 为溶剂2质量
+        m_str_3 = self.编辑框13.GetValue()    ##设置m_str_3 为溶剂3质量
+        md_str_5 = self.编辑框14.GetValue()  ## 设置md_str_5为密度
+        if m_str_1 == '':
+            m_str_1 = decimal.Decimal(1)  # 设置一个默认值
+        else:
+            m_str_1 = decimal.Decimal(m_str_1)
+        if m_str_2 == '':
+            m_str_2 = decimal.Decimal(1)  # 设置一个默认值
+        else:
+            m_str_2 = decimal.Decimal(m_str_2)
+        if m_str_3 == '':
+            m_str_3 = decimal.Decimal(1)  # 设置一个默认值
+        else:
+            m_str_3 = decimal.Decimal(m_str_3)
+
+        self.unit_1 = self.组合框3.GetValue()
+
+        ##一元溶剂 ## unit_4 == "g/100g" or unit_4 == "mol/mol"
+        if (mw_str_2 and m_str_1) != '' and (mw_str_3 and m_str_2)== ''and (mw_str_4 and m_str_3) == '':
+            if self.unit_1 == '溶质(g)':
+                self.variable = decimal.Decimal(concentration) / decimal.Decimal(
+                    self.mw1) / ((decimal.Decimal(concentration) / decimal.Decimal(self.mw1))+(decimal.Decimal(m_str_1) / mw2))
+                self.variable_1 = decimal.Decimal(concentration) / decimal.Decimal(m_str_1) * 100
+                self.variable_2 = decimal.Decimal(concentration) / (decimal.Decimal(m_str_1) / decimal.Decimal(md_str_5))* 100
+                return
+            if self.unit_1 == '摩尔溶解度(mol/mol)':
+                self.m1_str = (decimal.Decimal(concentration) * decimal.Decimal(self.mw1)) / (decimal.Decimal(1) - decimal.Decimal(concentration))  ## m1_str等于mol/mol转化对于的溶质量
+
+                self.variable_1 = decimal.Decimal(self.m1_str) / decimal.Decimal(m_str_1) * 100
+
+                self.variable_2 = decimal.Decimal(self.m1_str) / (
+                            decimal.Decimal(m_str_1) / decimal.Decimal(md_str_5)) * 100
+                return
 
 
-        if mw_str_2 != '':
-            # 判断组合框3为"nmol/μmol"和组合框4的单位并执行相应的计算
-            if (unit_3 == "nmol/μmol" or unit_3 == "μmol/mmol" or unit_3 == "mmol/mol") and (unit_4 == "nmol/μmol" or unit_4 == "μmol/mmol" or unit_4 == "mmol/mol"):
-                self.variable = decimal.Decimal(concentration)
-            elif (unit_3 == "nmol/μmol" or unit_3 == "μmol/mmol" or unit_3 == "mmol/mol") and (unit_4 == "nmol/mmol" or unit_4 == "μmol/mol"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 3)
-            elif (unit_3 == "nmol/μmol" or unit_3 == "μmol/mmol" or unit_3 == "mmol/mol") and (unit_4 == "nmol/mol"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 6)
-            elif (unit_3 == "nmol/μmol" or unit_3 == "μmol/mmol" or unit_3 == "mmol/mol") and (unit_4 == "mol/mol"):
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 3)
-
-            elif (unit_3 == "nmol/μmol" or unit_3 == "μmol/mmol" or unit_3 == "mmol/mol") and (unit_4 == "ng/g"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(mw1) * decimal.Decimal(10 ** 6) / decimal.Decimal(mw2)
-            elif (unit_3 == "nmol/μmol" or unit_3 == "μmol/mmol" or unit_3 == "mmol/mol") and unit_4 == "ug/g":
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 3) * decimal.Decimal(mw1) * decimal.Decimal(10 ** 6) / decimal.Decimal(mw2)
-            elif (unit_3 == "nmol/μmol" or unit_3 == "μmol/mmol" or unit_3 == "mmol/mol") and unit_4 == "mg/g":
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 6) * decimal.Decimal(mw1) * decimal.Decimal(10 ** 6) / decimal.Decimal(mw2)
-            elif (unit_3 == "nmol/μmol" or unit_3 == "μmol/mmol" or unit_3 == "mmol/mol") and unit_4 == "g/100g":
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 9) * decimal.Decimal(mw1) * decimal.Decimal(10 ** 8) / decimal.Decimal(mw2)
-
-            # 判断组合框3为"nmol/mmol"和组合框4的单位并执行相应的计算
-            elif (unit_3 == "nmol/mmol" or unit_3 == "μmol/mol") and (unit_4 == "nmol/μmol" or unit_4 == "μmol/mmol" or unit_4 == "mmol/mol"):
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 3)
-            elif (unit_3 == "nmol/mmol" or unit_3 == "μmol/mol") and (unit_4 == "nmol/mmol" or unit_4 == "μmol/mol"):
-                self.variable = decimal.Decimal(concentration)
-            elif (unit_3 == "nmol/mmol" or unit_3 == "μmol/mol") and (unit_4 == "nmol/mol"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 3)
-            elif (unit_3 == "nmol/mmol" or unit_3 == "μmol/mol") and (unit_4 == "mol/mol"):
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 6)
-
-            elif (unit_3 == "nmol/mmol" or unit_3 == "μmol/mol") and (unit_4 == "ng/g"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(mw1) * decimal.Decimal(
-                    10 ** 3) / decimal.Decimal(mw2)
-            elif (unit_3 == "nmol/mmol" or unit_3 == "μmol/mol") and unit_4 == "ug/g":
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 3) * decimal.Decimal(
-                    mw1) * decimal.Decimal(10 ** 3) / decimal.Decimal(mw2)
-            elif (unit_3 == "nmol/mmol" or unit_3 == "μmol/mol") and unit_4 == "mg/g":
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 6) * decimal.Decimal(
-                    mw1) * decimal.Decimal(10 ** 3) / decimal.Decimal(mw2)
-            elif (unit_3 == "nmol/mmol" or unit_3 == "μmol/mol") and unit_4 == "g/100g":
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 9) * decimal.Decimal(
-                    mw1) * decimal.Decimal(10 ** 5) / decimal.Decimal(mw2)
-
-            # 判断组合框3为"nmol/mol"和组合框4的单位并执行相应的计算
-            elif unit_3 == "nmol/mol" and (unit_4 == "nmol/μmol" or unit_4 == "μmol/mmol" or unit_4 == "mmol/mol"):
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 6)
-            elif unit_3 == "nmol/mol" and (unit_4 == "nmol/mmol" or unit_4 == "μmol/mol"):
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 3)
-            elif unit_3 == "nmol/mol" and (unit_4 == "nmol/mol"):
-                self.variable = decimal.Decimal(concentration)
-            elif unit_3 == "nmol/mol" and (unit_4 == "mol/mol"):
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 9)
-
-            elif unit_3 == "nmol/mol" and (unit_4 == "ng/g"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(mw1) / decimal.Decimal(mw2)
-            elif unit_3 == "nmol/mol" and unit_4 == "ug/g":
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 3) * decimal.Decimal(
-                    mw1)/ decimal.Decimal(mw2)
-            elif unit_3 == "nmol/mol" and unit_4 == "mg/g":
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 6) * decimal.Decimal(
-                    mw1)/ decimal.Decimal(mw2)
-            elif unit_3 == "nmol/mol" and unit_4 == "g/100g":
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 9) * decimal.Decimal(
-                    mw1) * decimal.Decimal(10 ** 2) / decimal.Decimal(mw2)
-
-            # 判断组合框3为"mol/mol"和组合框4的单位并执行相应的计算
-            elif unit_3 == "mol/mol" and (unit_4 == "nmol/μmol" or unit_4 == "μmol/mmol" or unit_4 == "mmol/mol"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 3)
-            elif unit_3 == "mol/mol" and (unit_4 == "nmol/mmol" or unit_4 == "μmol/mol"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 6)
-            elif unit_3 == "mol/mol" and (unit_4 == "nmol/mol"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 9)
-            elif unit_3 == "mol/mol" and (unit_4 == "mol/mol"):
-                self.variable = decimal.Decimal(concentration)
-
-            elif unit_3 == "mol/mol" and (unit_4 == "ng/g"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 9) * decimal.Decimal(mw1) / decimal.Decimal(mw2)
-            elif unit_3 == "mol/mol" and unit_4 == "ug/g":
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 6) * decimal.Decimal(
-                    mw1)/ decimal.Decimal(mw2)
-            elif unit_3 == "mol/mol" and unit_4 == "mg/g":
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 3) * decimal.Decimal(
-                    mw1)/ decimal.Decimal(mw2)
-            elif unit_3 == "mol/mol" and unit_4 == "g/100g":
-                self.variable = decimal.Decimal(concentration)* decimal.Decimal(
-                    mw1) * decimal.Decimal(10 ** 2) / decimal.Decimal(mw2)
-
-            # 判断组合框3为"ng/g"和组合框4的单位并执行相应的计算
-            elif unit_3 == "ng/g" and (unit_4 == "nmol/μmol" or unit_4 == "μmol/mmol" or unit_4 == "mmol/mol"):
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(mw1) / decimal.Decimal(10 ** 6) * decimal.Decimal(mw2)
-            elif unit_3 == "ng/g" and (unit_4 == "nmol/mmol" or unit_4 == "μmol/mol"):
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(mw1) / decimal.Decimal(10 ** 3) * decimal.Decimal(mw2)
-            elif unit_3 == "ng/g" and (unit_4 == "nmol/mol"):
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(mw1) * decimal.Decimal(mw2)
-            elif unit_3 == "ng/g" and (unit_4 == "mol/mol"):
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(mw1) / decimal.Decimal(10 ** 9) * decimal.Decimal(mw2)
-
-            elif unit_3 == "ng/g" and (unit_4 == "ng/g"):
-                self.variable = decimal.Decimal(concentration)
-            elif unit_3 == "ng/g" and unit_4 == "ug/g":
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 3)
-            elif unit_3 == "ng/g" and unit_4 == "mg/g":
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 6)
-            elif unit_3 == "ng/g" and unit_4 == "g/100g":
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 9) * decimal.Decimal(10 ** 2)
-
-            # 判断组合框3为"μg/g"和组合框4的单位并执行相应的计算
-            elif unit_3 == "μg/g" and (unit_4 == "nmol/μmol" or unit_4 == "μmol/mmol" or unit_4 == "mmol/mol"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 3) / decimal.Decimal(mw1) / decimal.Decimal(10 ** 6) * decimal.Decimal(mw2)
-            elif unit_3 == "μg/g" and (unit_4 == "nmol/mmol" or unit_4 == "μmol/mol"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 3) / decimal.Decimal(mw1) / decimal.Decimal(10 ** 3) * decimal.Decimal(mw2)
-            elif unit_3 == "μg/g" and (unit_4 == "nmol/mol"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 3) / decimal.Decimal(mw1) * decimal.Decimal(mw2)
-            elif unit_3 == "μg/g" and (unit_4 == "mol/mol"):
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(mw1) / decimal.Decimal(10 ** 6) * decimal.Decimal(mw2)
-
-            elif unit_3 == "μg/g" and (unit_4 == "ng/g"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 3)
-            elif unit_3 == "μg/g" and unit_4 == "ug/g":
-                self.variable = decimal.Decimal(concentration)
-            elif unit_3 == "μg/g" and unit_4 == "mg/g":
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 3)
-            elif unit_3 == "μg/g" and unit_4 == "g/100g":
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 6) * decimal.Decimal(10 ** 2)
-
-            # 判断组合框3为"mg/g"和组合框4的单位并执行相应的计算
-            elif unit_3 == "mg/g" and (unit_4 == "nmol/μmol" or unit_4 == "μmol/mmol" or unit_4 == "mmol/mol"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 6) / decimal.Decimal(mw1) / decimal.Decimal(10 ** 6) * decimal.Decimal(mw2)
-            elif unit_3 == "mg/g" and (unit_4 == "nmol/mmol" or unit_4 == "μmol/mol"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 6) / decimal.Decimal(mw1) / decimal.Decimal(10 ** 3) * decimal.Decimal(mw2)
-            elif unit_3 == "mg/g" and (unit_4 == "nmol/mol"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 6) / decimal.Decimal(mw1) * decimal.Decimal(mw2)
-            elif unit_3 == "mg/g" and (unit_4 == "mol/mol"):
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(mw1) / decimal.Decimal(10 ** 3) * decimal.Decimal(mw2)
-
-            elif unit_3 == "mg/g" and (unit_4 == "ng/g"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 6)
-            elif unit_3 == "mg/g" and unit_4 == "ug/g":
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 3)
-            elif unit_3 == "mg/g" and unit_4 == "mg/g":
-                self.variable = decimal.Decimal(concentration)
-            elif unit_3 == "mg/g" and unit_4 == "g/100g":
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(10 ** 3) * decimal.Decimal(10 ** 2)
-
-            # 判断组合框3为"g/100g"和组合框4的单位并执行相应的计算
-            elif unit_3 == "g/100g" and (unit_4 == "nmol/μmol" or unit_4 == "μmol/mmol" or unit_4 == "mmol/mol"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 3) / decimal.Decimal(mw1) / decimal.Decimal(10 ** 2) * decimal.Decimal(mw2)
-            elif unit_3 == "g/100g" and (unit_4 == "nmol/mmol" or unit_4 == "μmol/mol"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 6) / decimal.Decimal(mw1) / decimal.Decimal(10 ** 2) * decimal.Decimal(mw2)
-            elif unit_3 == "g/100g" and (unit_4 == "nmol/mol"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 9) / decimal.Decimal(mw1) / decimal.Decimal(10 ** 2) * decimal.Decimal(mw2)
-            elif unit_3 == "g/100g" and (unit_4 == "mol/mol"):
-                self.variable = decimal.Decimal(concentration) / decimal.Decimal(mw1) / decimal.Decimal(10 ** 2) * decimal.Decimal(mw2)
-
-            elif unit_3 == "g/100g" and (unit_4 == "ng/g"):
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 7)
-            elif unit_3 == "g/100g" and unit_4 == "ug/g":
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 4)
-            elif unit_3 == "g/100g" and unit_4 == "mg/g":
-                self.variable = decimal.Decimal(concentration) * decimal.Decimal(10 ** 1)
-            elif unit_3 == "g/100g" and unit_4 == "g/100g":
-                self.variable = decimal.Decimal(concentration)
 
 
-            else:
-                # 如果组合框3和组合框4的单位不匹配，可以定义一个默认值或提示错误信息
-                self.variable = decimal.Decimal(0)
+        ##二元溶剂 ## unit_4 == "g/100g" or unit_4 == "mol/mol"
+        if (mw_str_2 and m_str_1) != '' and (mw_str_3 and m_str_2) != '' and (mw_str_4 and m_str_3) == '':
+            if self.unit_1 == '溶质(g)':
+                self.variable = decimal.Decimal(concentration) / decimal.Decimal(
+                    self.mw1) / ((decimal.Decimal(concentration) / decimal.Decimal(self.mw1)) + (
+                            decimal.Decimal(m_str_1) / mw2) + (
+                            decimal.Decimal(m_str_2) / mw3))
+                self.variable_1 = decimal.Decimal(concentration) / (decimal.Decimal(m_str_1) + decimal.Decimal(m_str_2)) * 100
+                self.variable_2 = decimal.Decimal(concentration) / ((decimal.Decimal(m_str_1) + (m_str_2)) / decimal.Decimal(md_str_5)) * 100
+                return
+            if self.unit_1 == '摩尔溶解度(mol/mol)':
+                self.m1_str = (((decimal.Decimal(concentration) * decimal.Decimal(m_str_1) * decimal.Decimal(self.mw1))/decimal.Decimal(mw2)) + ((decimal.Decimal(concentration) * decimal.Decimal(m_str_2) * decimal.Decimal(self.mw1)))/ decimal.Decimal(mw3)) / (decimal.Decimal(1) - decimal.Decimal(concentration))  ## m1_str等于mol/mol转化对于的溶质量
+
+                self.variable_1 = decimal.Decimal(self.m1_str) / (decimal.Decimal(m_str_1) + decimal.Decimal(m_str_2)) * 100
+
+                self.variable_2 = decimal.Decimal(self.m1_str) / ((decimal.Decimal(m_str_1) + (m_str_2)) / decimal.Decimal(md_str_5)) * 100
+                # print(decimal.Decimal(self.m1_str))
+                return
+
+        ##三元溶剂 ## unit_4 == "g/100g" or unit_4 == "mol/mol"
+        if (mw_str_2 and m_str_1) != '' and (mw_str_3 and m_str_2) != '' and (mw_str_4 and m_str_3) != '':
+            if self.unit_1 == '溶质(g)':
+                self.variable = decimal.Decimal(concentration) / decimal.Decimal(
+                    self.mw1) / ((decimal.Decimal(concentration) / decimal.Decimal(self.mw1)) + (
+                        decimal.Decimal(m_str_1) / mw2) + (
+                                    decimal.Decimal(m_str_2) / mw3) + (
+                                    decimal.Decimal(m_str_3) / mw4))
+                self.variable_1 = decimal.Decimal(concentration) / (decimal.Decimal(m_str_1) + decimal.Decimal(m_str_2) + decimal.Decimal(m_str_3)) * 100
+                self.variable_2 = decimal.Decimal(concentration) / ((decimal.Decimal(m_str_1) + decimal.Decimal(m_str_2) + decimal.Decimal(m_str_3)) / decimal.Decimal(md_str_5)) * 100
+                return
+
+            if self.unit_1 == '摩尔溶解度(mol/mol)':
+                self.m1_str = (((decimal.Decimal(concentration) * decimal.Decimal(m_str_1) * decimal.Decimal(self.mw1))/decimal.Decimal(mw2)) + ((decimal.Decimal(concentration) * decimal.Decimal(m_str_2) * decimal.Decimal(self.mw1)))/ decimal.Decimal(mw3) + ((decimal.Decimal(concentration) * decimal.Decimal(m_str_3) * decimal.Decimal(self.mw1))/ decimal.Decimal(mw4) )) / (decimal.Decimal(1) - decimal.Decimal(concentration))  ## m1_str等于mol/mol转化对于的溶质量
+
+                self.variable_1 = decimal.Decimal(self.m1_str) / (decimal.Decimal(m_str_1) + decimal.Decimal(m_str_2) +decimal.Decimal(m_str_3)) * 100
+
+                self.variable_2 = decimal.Decimal(self.m1_str) / ((decimal.Decimal(m_str_1) + decimal.Decimal(m_str_2) + decimal.Decimal(m_str_3)) / decimal.Decimal(md_str_5)) * 100
+                # print(decimal.Decimal(self.m1_str))
+                return
+
+
 
     def on_close(self, event):
         dlg = wx.MessageDialog(self, "是否退出程序？", "摩尔浓度换算", wx.YES_NO | wx.ICON_QUESTION)
@@ -928,7 +929,7 @@ class Frame_mw(wx.Frame):
 
 class myApp(wx.App):
     def  OnInit(self):
-        self.frame = Frame_mw()
+        self.frame = Frame_solu()
         self.frame.Show(True)
         return True
 

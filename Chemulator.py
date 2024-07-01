@@ -4,6 +4,7 @@ import gettext
 _ = gettext.gettext
 from Chemulator_batch import *
 from Chemulator_mw import *
+from Chemulator_Solubility import *
 from Taowa_wx import *
 from Taowa_skin import *
 
@@ -30,7 +31,7 @@ class Frame(wx.Frame):
         self.SetIcon(icon)
         self.Bind(wx.EVT_CLOSE, self.on_close)  # 绑定关闭事件
         self.启动窗口 = wx.Panel(self)
-        self.启动窗口.SetOwnBackgroundColour((240, 240, 240, 255))
+        self.启动窗口.SetOwnBackgroundColour((249, 249, 249, 249))
         self.Centre()
 
         self.m_menubar4 = wx.MenuBar(0)
@@ -38,7 +39,7 @@ class Frame(wx.Frame):
             wx.Font(20, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "宋体"))
 
         self.m_menu8 = wx.Menu()
-        self.m_menuItem6 = wx.MenuItem(self.m_menu8, wx.ID_ANY, _(u"打开根目录") + u"\t" + u"CTRL+O", _(u"打开项目根目录"),
+        self.m_menuItem6 = wx.MenuItem(self.m_menu8, wx.ID_ANY, _(u"打开根目录") + u"\t" + u"Ctrl+O", _(u"打开项目根目录"),
                                        wx.ITEM_NORMAL)
         self.m_menuItem6.SetBitmap(
             wx.Bitmap(u"./ICO/open.png", wx.BITMAP_TYPE_ANY))
@@ -46,7 +47,7 @@ class Frame(wx.Frame):
 
         self.m_menu8.AppendSeparator()
 
-        self.m_menuItem5 = wx.MenuItem(self.m_menu8, wx.ID_ANY, _(u"退出程序") + u"\t" + u"ESC", _(u"退出应用程序"),
+        self.m_menuItem5 = wx.MenuItem(self.m_menu8, wx.ID_ANY, _(u"退出程序") + u"\t" + u"Esc", _(u"退出应用程序"),
                                        wx.ITEM_NORMAL)
         self.m_menuItem5.SetBitmap(
             wx.Bitmap(u"./ICO/exit.png", wx.BITMAP_TYPE_ANY))
@@ -55,7 +56,7 @@ class Frame(wx.Frame):
         self.m_menubar4.Append(self.m_menu8, _(u"文件"))
 
         self.m_menu11 = wx.Menu()
-        self.m_menuItem61 = wx.MenuItem(self.m_menu11, wx.ID_ANY, _(u"返回主界面") + u"\t" + u"CTRL+Q", _(u"返回主界面"),
+        self.m_menuItem61 = wx.MenuItem(self.m_menu11, wx.ID_ANY, _(u"返回主界面") + u"\t" + u"Ctrl+Q", _(u"返回主界面"),
                                         wx.ITEM_NORMAL)
         self.m_menuItem61.SetBitmap(
             wx.Bitmap(u"./ICO/windows.png", wx.BITMAP_TYPE_ANY))
@@ -64,17 +65,23 @@ class Frame(wx.Frame):
 
         self.m_menu11.AppendSeparator()
 
-        self.m_menuItem7 = wx.MenuItem(self.m_menu11, wx.ID_ANY, _(u"批量计算模式") + u"\t" + u"CTRL+W", _(u"用于多个数据批量计算"),
+        self.m_menuItem7 = wx.MenuItem(self.m_menu11, wx.ID_ANY, _(u"批量计算模式") + u"\t" + u"Ctrl+W", _(u"用于多个数据批量计算"),
                                        wx.ITEM_NORMAL)
         self.m_menuItem7.SetBitmap(
             wx.Bitmap(u"./ICO/multiple.png", wx.BITMAP_TYPE_ANY))
         self.m_menu11.Append(self.m_menuItem7)
 
-        self.m_menuItem8 = wx.MenuItem(self.m_menu11, wx.ID_ANY, _(u"质量分数模式") + u"\t" + u"CTRL+E",
+        self.m_menuItem8 = wx.MenuItem(self.m_menu11, wx.ID_ANY, _(u"其他换算") + u"\t" + u"Ctrl+E",
                                        _(u"用于常见的摩尔分数与质量分数间的转化"), wx.ITEM_NORMAL)
         self.m_menuItem8.SetBitmap(
             wx.Bitmap(u"./ICO/weight.png", wx.BITMAP_TYPE_ANY))
         self.m_menu11.Append(self.m_menuItem8)
+
+        self.m_menuItem10 = wx.MenuItem(self.m_menu11, wx.ID_ANY, _(u"溶解度计算") + u"\t" + u"Ctrl+R", _(u"用于化学溶解度计算"),
+                                       wx.ITEM_NORMAL)
+        self.m_menuItem10.SetBitmap(
+            wx.Bitmap(u"./ICO/solution.png", wx.BITMAP_TYPE_ANY))
+        self.m_menu11.Append(self.m_menuItem10)
 
         self.m_menubar4.Append(self.m_menu11, _(u"计算"))
 
@@ -93,7 +100,7 @@ class Frame(wx.Frame):
         self.m_menuItem19 = wx.MenuItem(self.m_menu2, wx.ID_ANY, _(u"Longhorn"), wx.EmptyString, wx.ITEM_NORMAL)
         self.m_menu2.Append(self.m_menuItem19)
 
-        self.m_menu1.AppendSubMenu(self.m_menu2, _(u"黑色类"))
+        self.m_menu1.AppendSubMenu(self.m_menu2, _(u"黑色系"))
 
         self.m_menu41 = wx.Menu()
         self.m_menuItem20 = wx.MenuItem(self.m_menu41, wx.ID_ANY, _(u"粉红主题"), wx.EmptyString, wx.ITEM_NORMAL)
@@ -102,7 +109,7 @@ class Frame(wx.Frame):
         self.m_menuItem21 = wx.MenuItem(self.m_menu41, wx.ID_ANY, _(u"彩虹"), wx.EmptyString, wx.ITEM_NORMAL)
         self.m_menu41.Append(self.m_menuItem21)
 
-        self.m_menu1.AppendSubMenu(self.m_menu41, _(u"粉色类"))
+        self.m_menu1.AppendSubMenu(self.m_menu41, _(u"粉色系"))
 
         self.m_menu51 = wx.Menu()
         self.m_menuItem22 = wx.MenuItem(self.m_menu51, wx.ID_ANY, _(u"Vista绿"), wx.EmptyString, wx.ITEM_NORMAL)
@@ -111,7 +118,7 @@ class Frame(wx.Frame):
         self.m_menuItem23 = wx.MenuItem(self.m_menu51, wx.ID_ANY, _(u"Storm"), wx.EmptyString, wx.ITEM_NORMAL)
         self.m_menu51.Append(self.m_menuItem23)
 
-        self.m_menu1.AppendSubMenu(self.m_menu51, _(u"绿色类"))
+        self.m_menu1.AppendSubMenu(self.m_menu51, _(u"绿色系"))
 
         self.m_menu61 = wx.Menu()
         self.m_menuItem24 = wx.MenuItem(self.m_menu61, wx.ID_ANY, _(u"编程助手"), wx.EmptyString, wx.ITEM_NORMAL)
@@ -120,7 +127,7 @@ class Frame(wx.Frame):
         self.m_menuItem25 = wx.MenuItem(self.m_menu61, wx.ID_ANY, _(u"彗星小助手"), wx.EmptyString, wx.ITEM_NORMAL)
         self.m_menu61.Append(self.m_menuItem25)
 
-        self.m_menu1.AppendSubMenu(self.m_menu61, _(u"青色类"))
+        self.m_menu1.AppendSubMenu(self.m_menu61, _(u"青色系"))
 
         self.m_menu71 = wx.Menu()
         self.m_menuItem26 = wx.MenuItem(self.m_menu71, wx.ID_ANY, _(u"记忆蓝"), wx.EmptyString, wx.ITEM_NORMAL)
@@ -153,7 +160,7 @@ class Frame(wx.Frame):
         self.m_menuItem35 = wx.MenuItem(self.m_menu71, wx.ID_ANY, _(u"可爱蓝"), wx.EmptyString, wx.ITEM_NORMAL)
         self.m_menu71.Append(self.m_menuItem35)
 
-        self.m_menu1.AppendSubMenu(self.m_menu71, _(u"蓝色类"))
+        self.m_menu1.AppendSubMenu(self.m_menu71, _(u"蓝色系"))
 
         self.m_menu81 = wx.Menu()
         self.m_menuItem36 = wx.MenuItem(self.m_menu81, wx.ID_ANY, _(u"MAC"), wx.EmptyString, wx.ITEM_NORMAL)
@@ -165,7 +172,7 @@ class Frame(wx.Frame):
         self.m_menuItem37 = wx.MenuItem(self.m_menu81, wx.ID_ANY, _(u"Dogmax"), wx.EmptyString, wx.ITEM_NORMAL)
         self.m_menu81.Append(self.m_menuItem37)
 
-        self.m_menu1.AppendSubMenu(self.m_menu81, _(u"其他"))
+        self.m_menu1.AppendSubMenu(self.m_menu81, _(u"其他系"))
 
         self.m_menuItem301 = wx.MenuItem(self.m_menu1, wx.ID_ANY, _(u"恢复默认"), wx.EmptyString, wx.ITEM_NORMAL)
         self.m_menu1.Append(self.m_menuItem301)
@@ -190,6 +197,7 @@ class Frame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.main, id = self.m_menuItem61.GetId())
         self.Bind(wx.EVT_MENU, self.Batch, id = self.m_menuItem7.GetId())
         self.Bind(wx.EVT_MENU, self.Quality, id = self.m_menuItem8.GetId())
+        self.Bind(wx.EVT_MENU, self.solu, id=self.m_menuItem10.GetId())
         self.Bind(wx.EVT_MENU, self.Q1, id = self.m_menuItem16.GetId())
         self.Bind(wx.EVT_MENU, self.Q2, id = self.m_menuItem17.GetId())
         self.Bind(wx.EVT_MENU, self.Q3, id = self.m_menuItem18.GetId())
@@ -236,9 +244,9 @@ class Frame(wx.Frame):
         self.组合框2.SetSize((172, 28))
         # 刷新Combobox的选项
         self.refresh_folder_names()
-        组合框2_字体 = wx.Font(11, 74, 90, 400, False, 'Microsoft YaHei UI', 28)
+        组合框2_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.组合框2.SetFont(组合框2_字体)
-        self.组合框2.SetOwnBackgroundColour((224, 224, 224, 255))
+        self.组合框2.SetOwnBackgroundColour((249, 249, 249, 249))
         self.组合框2.Bind(wx.EVT_COMBOBOX, self.组合框2_选中列表项)
         self.组合框2.Bind(wx.EVT_COMBOBOX_DROPDOWN, self.组合框2_弹出列表项)
         self.超级列表框1 = wx_ListCtrl(self.启动窗口,size=(285, 490),pos=(1, 79),name='listCtrl',style=32)
@@ -246,7 +254,7 @@ class Frame(wx.Frame):
         self.超级列表框1.AppendColumn('化学式', 0, 85)
         self.超级列表框1.AppendColumn('分子量', 0, 85)
         self.超级列表框1.Append(['', '', ''])
-        超级列表框1_字体 = wx.Font(12, 74, 90, 400, False, 'Microsoft YaHei UI', 28)
+        超级列表框1_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.超级列表框1.SetFont(超级列表框1_字体)
         # 创建字典来存储选中的化合物和分子量数据
         self.selected_data = {}
@@ -254,6 +262,7 @@ class Frame(wx.Frame):
         self.超级列表框1.Bind(wx.EVT_LIST_ITEM_DESELECTED, self.超级列表框1_取消选中表项)
         self.超级列表框1.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.超级列表框1_右键单击表项)
         self.超级列表框1.Bind(wx.EVT_LEFT_DCLICK, self.超级列表框1_鼠标左键双击)
+        self.超级列表框1.SetOwnBackgroundColour((249, 249, 249, 249))
         图片框3_图片 = wx.Image(r'.\ICO\folder.png').ConvertToBitmap()
         self.图片框3 = wx_StaticBitmap(self.启动窗口, bitmap=图片框3_图片,size=(32, 30),pos=(283, 12),name='staticBitmap',style=0)
         self.图片框3.Bind(wx.EVT_LEFT_DOWN,self.图片框3_鼠标左键按下)
@@ -263,8 +272,9 @@ class Frame(wx.Frame):
         self.图文按钮2.SetToolTip("填入选中化合物、分子量")
         self.图文按钮2.Bind(wx.EVT_BUTTON, self.图文按钮2_按钮被单击)
         self.列表框2 = wx_ListBox(self.启动窗口, size=(649, 218), pos=(337, 353), name='listBox', choices=[], style=1073741984)
-        列表框2_字体 = wx.Font(12, 74, 90, 400, False, 'Microsoft YaHei UI', 28)
+        列表框2_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.列表框2.SetFont(列表框2_字体)
+        self.列表框2.SetOwnBackgroundColour((249, 249, 249, 249))
         self.列表框2.Bind(wx.EVT_RIGHT_DOWN, self.列表框2_鼠标右键按下)
 
         图文按钮5_图片 = wx.Image(r'.\ICO\plus.png').ConvertToBitmap()
@@ -274,63 +284,70 @@ class Frame(wx.Frame):
         self.图文按钮5.Bind(wx.EVT_BUTTON, self.图文按钮5_按钮被单击)
         self.标签1 = wx_StaticTextL(self.启动窗口, size=(178, 28), pos=(335, 107), label='化合物(Compound)', name='staticText',
                                   style=1)
-        标签1_字体 = wx.Font(14, 74, 90, 400, False, '华文新魏', 28)
+        标签1_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.标签1.SetFont(标签1_字体)
-        self.编辑框3 = wx_TextCtrl(self.启动窗口, size=(110, 28), pos=(640, 139), value='', name='text', style=256)
-        编辑框3_字体 = wx.Font(12, 72, 90, 400, False, 'Microsoft YaHei UI', 33)
+        self.编辑框3 = wx_TextCtrl(self.启动窗口, size=(110, 28), pos=(637, 139), value='', name='text', style=256)
+        编辑框3_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.编辑框3.SetFont(编辑框3_字体)
-        self.标签2 = wx_StaticTextL(self.启动窗口, size=(120, 28), pos=(632, 107), label='数量(Amount)', name='staticText',
+        self.编辑框3.SetOwnBackgroundColour((249, 249, 249, 249))
+        self.标签2 = wx_StaticTextL(self.启动窗口, size=(120, 28), pos=(637, 107), label='数量(Amount)', name='staticText',
                                   style=1)
-        标签2_字体 = wx.Font(14, 74, 90, 400, False, '华文新魏', 28)
+        标签2_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.标签2.SetFont(标签2_字体)
 
-        self.标签3 = wx_StaticTextL(self.启动窗口, size=(92, 27), pos=(764, 86), label='转化自', name='staticText', style=257)
-        标签3_字体 = wx.Font(14, 74, 90, 400, False, '华文新魏', 28)
+        self.标签3 = wx_StaticTextL(self.启动窗口, size=(92, 27), pos=(740, 88), label='转化自', name='staticText', style=257)
+        标签3_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.标签3.SetFont(标签3_字体)
-        self.标签4 = wx_StaticTextL(self.启动窗口, size=(92, 27), pos=(888, 86), label='转化为', name='staticText', style=257)
-        标签4_字体 = wx.Font(14, 74, 90, 400, False, '华文新魏', 28)
+        self.标签4 = wx_StaticTextL(self.启动窗口, size=(92, 27), pos=(860, 88), label='转化为', name='staticText', style=257)
+        标签4_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.标签4.SetFont(标签4_字体)
-        self.标签5 = wx_StaticTextL(self.启动窗口, size=(109, 28), pos=(515, 107), label='分子量(m.w)', name='staticText',
+        self.标签5 = wx_StaticTextL(self.启动窗口, size=(109, 28), pos=(523, 107), label='分子量(m.w)', name='staticText',
                                   style=1)
-        标签5_字体 = wx.Font(14, 74, 90, 400, False, '华文新魏', 28)
+        标签5_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.标签5.SetFont(标签5_字体)
         self.标签8 = wx_StaticTextL(self.启动窗口, size=(131, 28), pos=(754, 107), label='(Convert from)', name='staticText',
                                   style=1)
-        标签8_字体 = wx.Font(14, 74, 90, 400, False, '华文新魏', -1)
+        标签8_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.标签8.SetFont(标签8_字体)
-        self.标签10 = wx_StaticTextL(self.启动窗口, size=(106, 28), pos=(888, 107), label='(Convert to)', name='staticText',
+        self.标签10 = wx_StaticTextL(self.启动窗口, size=(106, 28), pos=(876, 107), label='(Convert to)', name='staticText',
                                    style=1)
-        标签10_字体 = wx.Font(14, 74, 90, 400, False, '华文新魏', -1)
+        标签10_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.标签10.SetFont(标签10_字体)
         self.编辑框4 = wx_TextCtrl(self.启动窗口, size=(110, 28), pos=(522, 139), value='', name='text', style=256)
-        编辑框4_字体 = wx.Font(12, 74, 90, 400, False, 'Microsoft YaHei UI', 28)
+        编辑框4_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.编辑框4.SetFont(编辑框4_字体)
         self.编辑框4.SetForegroundColour((128, 0, 0, 255))
+        self.编辑框4.SetOwnBackgroundColour((249, 249, 249, 249))
         self.组合框3 = wx.ComboBox(self.启动窗口,value='',pos=(758, 139),name='comboBox',choices=['g/L','mg/L','μg/L','ng/L','g/mL', 'mg/mL', 'μg/mL', 'ng/mL', 'pg/mL', 'fg/mL', 'ng/dL', 'mol/L', 'mmol/L', 'μmol/L', 'nmol/L', 'pmol/L'],style=16)
         self.组合框3.SetSize((110, 28))
-        组合框3_字体 = wx.Font(12,74,90,400,False,'Microsoft YaHei UI',28)
+        组合框3_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.组合框3.SetFont(组合框3_字体)
+        self.组合框3.SetOwnBackgroundColour((249, 249, 249, 249))
         self.组合框4 = wx.ComboBox(self.启动窗口,value='',pos=(876, 139),name='comboBox',choices=['g/L','mg/L','μg/L','ng/L','g/mL', 'mg/mL', 'μg/mL', 'ng/mL', 'pg/mL', 'fg/mL', 'ng/dL', 'mol/L', 'mmol/L', 'μmol/L', 'nmol/L', 'pmol/L'],style=16)
         self.组合框4.SetSize((110, 28))
-        组合框4_字体 = wx.Font(12,74,90,400,False,'Microsoft YaHei UI',28)
+        组合框4_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.组合框4.SetFont(组合框4_字体)
+        self.组合框4.SetOwnBackgroundColour((249, 249, 249, 249))
         self.编辑框7 = wx_TextCtrl(self.启动窗口, size=(590, 32), pos=(336, 269), value='', name='text', style=16)
-        编辑框7_字体 = wx.Font(12, 74, 90, 400, False, 'Microsoft YaHei UI', 28)
+        编辑框7_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.编辑框7.SetFont(编辑框7_字体)
+        self.编辑框7.SetOwnBackgroundColour((249, 249, 249, 249))
         图文按钮6_图片 = wx.Image(r'.\ICO\down.png').ConvertToBitmap()
         self.图文按钮6 = lib_button_ThemedGenBitmapTextButton(self.启动窗口, size=(35, 32), pos=(925, 269), bitmap=图文按钮6_图片,
                                                           label='', name='genbutton')
         self.图文按钮6.SetToolTip("结果移入历史记录")
         self.图文按钮6.Bind(wx.EVT_BUTTON, self.图文按钮6_按钮被单击)
-        self.图文按钮L2 = lib_gb_GradientButton(self.启动窗口, size=(100, 32), pos=(336, 235), bitmap=None, label='计算结果',
+
+        self.图文按钮L2 = lib_gb_GradientButton(self.启动窗口, size=(96, 30), pos=(336, 235), bitmap=None, label='计算结果',
                                             name='gradientbutton')
         self.图文按钮L2.Disable()
-        图文按钮L2_字体 = wx.Font(12, 74, 90, 400, False, '华文新魏', 28)
+        图文按钮L2_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.图文按钮L2.SetFont(图文按钮L2_字体)
         self.图文按钮L2.SetForegroundColour((255, 255, 255, 255))
-        self.图文按钮L3 = lib_gb_GradientButton(self.启动窗口, size=(101, 32), pos=(336, 320), bitmap=None, label='历史记录',
+
+        self.图文按钮L3 = lib_gb_GradientButton(self.启动窗口, size=(96, 30), pos=(336, 320), bitmap=None, label='历史记录',
                                             name='gradientbutton')
-        图文按钮L3_字体 = wx.Font(12, 74, 90, 400, False, '华文新魏', 28)
+        图文按钮L3_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.图文按钮L3.Disable()
         self.图文按钮L3.SetFont(图文按钮L3_字体)
         self.图文按钮L3.SetForegroundColour((255, 255, 255, 255))
@@ -340,17 +357,19 @@ class Frame(wx.Frame):
         self.图文按钮7.Bind(wx.EVT_BUTTON, self.图文按钮7_按钮被单击)
         self.整数微调框1 = wx_SpinCtrl(self.启动窗口,size=(40, 28),pos=(890, 241),name='wxSpinCtrl',min=1,max=9,initial=2,style=16640)
         self.整数微调框1.SetBase(10)
-        整数微调框1_字体 = wx.Font(12,74,90,400,False,'Microsoft YaHei UI',28)
+        整数微调框1_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.整数微调框1.SetFont(整数微调框1_字体)
         self.整数微调框1.Bind(wx.EVT_SPINCTRL,self.整数微调框1_数值被调整)
-        self.标签6 = wx_StaticTextL(self.启动窗口, size=(192, 24), pos=(698, 245), label='设置计算结果的小数位数：', name='staticText',
+        self.整数微调框1.SetForegroundColour((128, 0, 0, 255))
+        self.标签6 = wx_StaticTextL(self.启动窗口, size=(192, 24), pos=(712, 245), label='设置计算结果的小数位数：', name='staticText',
                                   style=256)
-        标签6_字体 = wx.Font(12, 74, 90, 400, False, '华文新魏', 28)
+        标签6_字体 = wx.Font( 11, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "楷体" )
         self.标签6.SetFont(标签6_字体)
         self.编辑框6 = wx_TextCtrl(self.启动窗口, size=(178, 28), pos=(336, 139), value='', name='text', style=0)
-        编辑框6_字体 = wx.Font(12, 74, 90, 400, False, 'Microsoft YaHei UI', 28)
+        编辑框6_字体 = wx.Font( 12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "微软雅黑" )
         self.编辑框6.SetFont(编辑框6_字体)
         self.编辑框6.SetForegroundColour((128, 0, 0, 255))
+        self.编辑框6.SetOwnBackgroundColour((249, 249, 249, 249))
 
         self.Bind(wx.EVT_TEXT, self.更新编辑框7内容, self.编辑框6)
         self.Bind(wx.EVT_TEXT, self.更新编辑框7内容, self.编辑框4)
@@ -376,24 +395,26 @@ class Frame(wx.Frame):
     def main(self, event):
         from Chemulator import Frame
         main_frame = Frame()
-        # 关闭当前窗口
-        self.Close()
+        self.Destroy() #直接退出程序
         main_frame.Show(True)
 
     def Batch(self, event):
         from Chemulator_batch import Frame_batch
         batch_frame = Frame_batch()  # 创建 Chemulator_batch.py中的窗口实例
-        # 关闭当前窗口
-        self.Close()
+        self.Destroy() #直接退出程序
         batch_frame.Show(True)  # 显示窗口
 
     def Quality(self, event):
         from Chemulator_mw import Frame_mw
         quality_frame = Frame_mw()  # 创建 Chemulator_batch.py中的窗口实例
-        # 关闭当前窗口
-        self.Close()
+        self.Destroy() #直接退出程序
         quality_frame.Show(True)  # 显示窗口
 
+    def solu(self, event):
+        from Chemulator_Solubility import Frame_solu
+        solu_frame = Frame_solu()  # 创建 Frame_solu.py中的窗口实例
+        self.Destroy() #直接退出程序
+        solu_frame.Show(True)  # 显示窗口
     def help( self, event ):
         # 打开帮助文档
         current_dir = os.getcwd()
@@ -587,22 +608,11 @@ class Frame(wx.Frame):
         file_path = './Configuration/global_variable.txt'  # 替换为你希望保存全局变量的文件路径
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write('None')
-
-        # 创建消息对话框
-        app = wx.App()
-        dlg = wx.MessageDialog(None, "初始化完毕，请重新启动程序完成加载！", "初始化提示", wx.OK | wx.ICON_INFORMATION)
-
-        if dlg.ShowModal() == wx.ID_OK:
-            dlg.Destroy()
-            app.ExitMainLoop()  # 关闭程序
-            sys.exit(0)  # 结束进程
-        else:
-            dlg.Destroy()
-
-        app.MainLoop()
-
-
-
+        皮肤_卸载()
+        # 关闭当前窗口
+        self.Close()
+        self.frame = Frame()
+        self.frame.Show(True)
 
 
 
@@ -1406,17 +1416,12 @@ class Frame(wx.Frame):
             self.variable = decimal.Decimal(0)
 
     def on_close(self, event):
-        # 检查是否存在 Batch 方法正在执行
-        if 'Batch' in self.__dir__() or 'Quality' in self.__dir__():
-            self.Destroy()  # 直接退出程序
+        dlg = wx.MessageDialog(self, "是否退出程序？", "摩尔浓度换算", wx.YES_NO | wx.ICON_QUESTION)
+        result = dlg.ShowModal()
+        dlg.Destroy()
 
-        else:
-            dlg = wx.MessageDialog(self, "是否退出程序？", "化学浓度换算", wx.YES_NO | wx.ICON_QUESTION)
-            result = dlg.ShowModal()
-            dlg.Destroy()
-
-            if result == wx.ID_YES:
-                self.Destroy()
+        if result == wx.ID_YES:
+            self.Destroy()
 
 
 
