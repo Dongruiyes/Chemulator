@@ -609,8 +609,7 @@ class Frame(wx.Frame):
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write('None')
         皮肤_卸载()
-        # 关闭当前窗口
-        self.Close()
+        self.Destroy() #直接退出程序
         self.frame = Frame()
         self.frame.Show(True)
 
