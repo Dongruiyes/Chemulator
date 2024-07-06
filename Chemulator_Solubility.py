@@ -865,7 +865,7 @@ class Frame_solu(wx.Frame):
                 self.variable_2 = decimal.Decimal(concentration) / (decimal.Decimal(m_str_1) / decimal.Decimal(md_str_5))* 100
                 return
             if self.unit_1 == '摩尔溶解度(mol/mol)':
-                self.m1_str = (decimal.Decimal(concentration) * decimal.Decimal(self.mw1)) / (decimal.Decimal(1) - decimal.Decimal(concentration))  ## m1_str等于mol/mol转化对于的溶质量
+                self.m1_str = (decimal.Decimal(concentration) * decimal.Decimal(m_str_1) * decimal.Decimal(self.mw1)) / ((decimal.Decimal(1) - decimal.Decimal(concentration)) * decimal.Decimal(mw2)) ## m1_str等于mol/mol转化对于的溶质量
 
                 self.variable_1 = decimal.Decimal(self.m1_str) / decimal.Decimal(m_str_1) * 100
 

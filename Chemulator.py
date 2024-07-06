@@ -12,7 +12,6 @@ from Taowa_skin import *
 # 皮肤定义全局变量
 global_variable = None
 
-
 def load_global_variable():
     file_path = './Configuration/global_variable.txt'  # 替换为你保存全局变量的文件路径
     try:
