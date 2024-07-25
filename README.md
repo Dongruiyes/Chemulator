@@ -13,10 +13,10 @@
 
 ## 特性
 
-- **计算功能**：包括<font face="黑体" color=green size=5>质量浓度</font>、<font face="黑体" color=green size=5>物质的量浓度</font>、<font face="黑体" color=Blue size=5>溶解度</font>、<font face="黑体" color=red size=5>摩尔分数</font>相关计算。
-- **数据集**：集成九大类化合物化学式及其对应分子量，且支持自定义增删数据集。
-- **主题自定义**：本软件可以通过主题包定义软件外观及背景。
-- **隐私**：软件所有数据存储在本地，本软件不会上传你的个人信息。
+- 计算功能：包括<font face="黑体" color=green size=5>质量浓度</font>、<font face="黑体" color=green size=5>物质的量浓度</font>、<font face="黑体" color=Blue size=5>溶解度</font>、<font face="黑体" color=red size=5>摩尔分数</font>相关计算。
+- 数据集：集成九大类化合物化学式及其对应分子量，且支持自定义增删数据集。
+- 主题自定义：本软件可以通过主题包定义软件外观及背景。
+- 隐私：软件所有数据存储在本地，本软件不会上传你的个人信息。
 
 
 
