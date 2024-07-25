@@ -22,7 +22,7 @@
 
 ## 支持这个项目
 
-如果你喜欢这个项目，或者希望我可以持续维护下去，你可以通过以下任何一种方式支持我；
+如果你喜欢这个项目，或者希望我可以持续维护下去，可以通过以下任何一种方式支持我；
 
 1. Star 这个项目，分享给你身边的人；
 2. 关注公众号【由南往北】获取最新信息；
@@ -31,28 +31,27 @@
 
 ------
 
-## 截图
+## 软件截图
 
-软件主界面：
-
+> 软件主界面：
 <img src=".\res\main.png" alt="main" align="left"/>
+&nbsp;
 
-批量换算界面：
-
+> 批量换算界面：
 <img src=".\res\batch.png" alt="batch" align="left"/>
+&nbsp;
 
-其他换算界面（g/100g、mol/mol等）：
-
+> 其他换算界面（g/100g、mol/mol等）：
 <img src=".\res\other.png" alt="other" align="left"/>
+&nbsp;
 
-溶解度计算界面（化学相关）：
-
+> 溶解度计算界面（化学相关）：
 <img src=".\res\solubility.png" alt="solubility" align="left"/>
+&nbsp;
 
-帮助文档界面：
-
+> 帮助文档界面：
 <img src=".\res\chm.png" alt="chm" align="left"/>
+&nbsp;
 
-在线更新界面：
-
+> 在线更新界面：
 <img src=".\res\updata.png" alt="updata" align="left"/>
