@@ -27,7 +27,7 @@
 1. Star 这个项目，分享给你身边的人；
 2. 关注公众号【由南往北】获取最新信息；
 
-<img src=".\res\由南往北.png" alt="由南往北" style="zoom: 25%;" align="left"/>
+<img src=".\res\由南往北.png" alt="由南往北" height="164px" style="display:inherit;"/>
 
 ------
 
