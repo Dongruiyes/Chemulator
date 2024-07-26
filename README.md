@@ -4,7 +4,7 @@
 
 ## 简介
 
-一个平平无奇的化学浓度换算软件。
+一款平平无奇的化学浓度换算软件。
 > 当前版本支持 windows
 
 ### 下载地址
@@ -13,7 +13,7 @@
 
 ## 特性
 
-- 计算功能：包括<font face="黑体" color=green size=5>质量浓度</font>、<font face="黑体" color=green size=5>物质的量浓度</font>、<font face="黑体" color=Blue size=5>溶解度</font>、<font face="黑体" color=red size=5>摩尔分数</font>相关计算。
+- 计算功能：包括<font face="黑体" color=green size=5>质量浓度</font>（g/L、mg/L、μg/L、ng/L、g/mL、mg/mL、μg/mL等）、<font face="黑体" color=green size=5>物质的量浓度</font>（nmol/L、μmol/L、mmol/L、mol/L）、<font face="黑体" color=Blue size=5>溶解度</font>、<font face="黑体" color=red size=5>摩尔分数</font>（mol/mol)相关计算。
 - 数据集：集成九大类化合物化学式及其对应分子量，且支持自定义增删数据集。
 - 主题自定义：本软件可以通过主题包定义软件外观及背景。
 - 隐私：软件所有数据存储在本地，本软件不会上传你的个人信息。
